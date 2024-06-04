@@ -107,22 +107,22 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += swd
+  bin_PROGRAMS += dashd
 endif
 
 if BUILD_BITCOIN_NODE
-  bin_PROGRAMS += sw-node
+  bin_PROGRAMS += dash-node
 endif
 
 if BUILD_BITCOIN_CLI
-  bin_PROGRAMS += sw-cli
+  bin_PROGRAMS += dash-cli
 endif
 if BUILD_BITCOIN_TX
-  bin_PROGRAMS += sw-tx
+  bin_PROGRAMS += dash-tx
 endif
 if ENABLE_WALLET
 if BUILD_BITCOIN_WALLET
-  bin_PROGRAMS += sw-wallet
+  bin_PROGRAMS += dash-wallet
 endif
 endif
 
@@ -396,7 +396,7 @@ obj/build.h: FORCE
 	  "$(abs_top_srcdir)"
 libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
-# server: shared between swd and sw-qt
+# server: shared between dashd and dash-qt
 # Contains code accessing mempool and chain state that is meant to be separated
 # from wallet and gui code (see node/README.md). Shared code should go in
 # libbitcoin_common or libbitcoin_util libraries, instead.
@@ -532,7 +532,7 @@ libbitcoin_zmq_a_SOURCES = \
 endif
 
 
-# wallet: shared between swd and sw-qt, but only linked
+# wallet: shared between dashd and dash-qt, but only linked
 # when wallet enabled
 libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(SQLITE_CFLAGS)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
@@ -702,7 +702,7 @@ libbitcoin_consensus_a_SOURCES = \
   util/string.cpp \
   version.h
 
-# common: shared between swd, and sw-qt and non-server tools
+# common: shared between dashd, and dash-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
@@ -792,7 +792,7 @@ if USE_LIBEVENT
 libbitcoin_util_a_SOURCES += util/url.cpp
 endif
 
-# cli: shared between sw-cli and sw-qt
+# cli: shared between dash-cli and dash-qt
 libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
@@ -804,7 +804,7 @@ libbitcoin_cli_a_SOURCES = \
 nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# swd & sw-node binaries #
+# dashd & dash-node binaries #
 bitcoin_daemon_sources = bitcoind.cpp
 bitcoin_bin_cppflags = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 bitcoin_bin_cxxflags = $(AM_CXXFLAGS) $(PIE_FLAGS)
@@ -830,11 +830,11 @@ bitcoin_bin_ldadd = \
 
 bitcoin_bin_ldadd += $(BACKTRACE_LIB) $(BOOST_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(SQLITE_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(GMP_LIBS)
 
-swd_SOURCES = $(bitcoin_daemon_sources)
-swd_CPPFLAGS = $(bitcoin_bin_cppflags)
-swd_CXXFLAGS = $(bitcoin_bin_cxxflags)
-swd_LDFLAGS = $(bitcoin_bin_ldflags)
-swd_LDADD = $(LIBBITCOIN_SERVER) $(bitcoin_bin_ldadd)
+dashd_SOURCES = $(bitcoin_daemon_sources)
+dashd_CPPFLAGS = $(bitcoin_bin_cppflags)
+dashd_CXXFLAGS = $(bitcoin_bin_cxxflags)
+dashd_LDFLAGS = $(bitcoin_bin_ldflags)
+dashd_LDADD = $(LIBBITCOIN_SERVER) $(bitcoin_bin_ldadd)
 
 dash_node_SOURCES = $(bitcoin_daemon_sources)
 dash_node_CPPFLAGS = $(bitcoin_bin_cppflags)
@@ -842,35 +842,35 @@ dash_node_CXXFLAGS = $(bitcoin_bin_cxxflags)
 dash_node_LDFLAGS = $(bitcoin_bin_ldflags)
 dash_node_LDADD = $(LIBBITCOIN_SERVER) $(bitcoin_bin_ldadd)
 
-# sw-cli binary #
-sw_cli_SOURCESes = bitcoin-cli.cpp
+# dash-cli binary #
+dash_cli_SOURCES = bitcoin-cli.cpp
 dash_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
 dash_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-sw_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+dash_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-sw_cli_SOURCESes += dash-cli-res.rc
+dash_cli_SOURCES += dash-cli-res.rc
 endif
 
-sw_cli_LDADD = \
+dash_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
-sw_cli_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
+dash_cli_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
 #
 
-# sw-tx binary #
-sw_tx_SOURCES = bitcoin-tx.cpp
+# dash-tx binary #
+dash_tx_SOURCES = bitcoin-tx.cpp
 dash_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 dash_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-sw_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+dash_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-sw_tx_SOURCES += dash-tx-res.rc
+dash_tx_SOURCES += dash-tx-res.rc
 endif
 
-sw_tx_LDADD = \
+dash_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -879,18 +879,18 @@ sw_tx_LDADD = \
   $(LIBDASHBLS) \
   $(LIBSECP256K1)
 
-sw_tx_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(GMP_LIBS)
+dash_tx_LDADD += $(BACKTRACE_LIB) $(BOOST_LIBS) $(GMP_LIBS)
 #
 
-# sw-wallet binary #
-sw_wallet_SOURCES = bitcoin-wallet.cpp
+# dash-wallet binary #
+dash_wallet_SOURCES = bitcoin-wallet.cpp
 dash_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
 dash_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
-sw_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
-sw_wallet_LDADD = $(LIBBITCOIN_WALLET_TOOL) $(bitcoin_bin_ldadd)
+dash_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
+dash_wallet_LDADD = $(LIBBITCOIN_WALLET_TOOL) $(bitcoin_bin_ldadd)
 
 if TARGET_WINDOWS
-sw_wallet_SOURCES += dash-wallet-res.rc
+dash_wallet_SOURCES += dash-wallet-res.rc
 endif
 #
 
